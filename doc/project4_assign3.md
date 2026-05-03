@@ -178,7 +178,10 @@
 ## 3. 요구사항
 요구사항은 고유 식별자, 그룹(분류), 단문 형태의 상세 내용, 우선순위(High/Medium/Low)로 체계화하여 기술한다.
 
-### 3.1 기능적 요구사항
+### 3.1 정적 분석
+![요구사항 정적 분석 이미지](../image/요구사항%20정적%20분석%20다이어그램.png "미니 드라이브에 맞춘 요구사항 정적 분석 다이어그램입니다.")
+
+### 3.2 기능적 요구사항
 
 | 식별자(ID) | 그룹(분류) | 요구사항 상세 내용 | 우선순위 |
 | :--- | :--- | :--- | :--- |
@@ -195,7 +198,7 @@
 | **F-011** | 계정 관리 | 관리자는 새로운 사용자 계정을 생성하고 삭제한다. | High |
 | **F-012** | 계정 관리 | 관리자는 사용자별로 저장 공간(Quota)을 할당한다. | Medium |
 
-### 3.2 비기능적 요구사항
+### 3.3 비기능적 요구사항
 
 | 식별자(ID) | 그룹(분류) | 요구사항 상세 내용 | 우선순위 |
 | :--- | :--- | :--- | :--- |
@@ -206,11 +209,198 @@
 | **N-005** | 운영 | 시스템은 연간 99.9% 이상의 가동률(Availability)을 보장한다. | High |
 | **N-006** | 운영 | 시스템은 파일 작업 오류 시 자동 재시도 메커니즘을 수행한다. | Medium |
 
-### 3.3 인터페이스 요구사항
+### 3.4 인터페이스 요구사항
 
 | 식별자(ID) | 그룹(분류) | 요구사항 상세 내용 | 우선순위 |
 | :--- | :--- | :--- | :--- |
 | **I-001** | UI/UX | 시스템은 사용자가 3-Click 이내에 원하는 목적지에 도달하는 인터페이스를 제공한다. | High |
+
+### 3.5 CRC 카드.
+#### 1. 사용자
+- Class Name: 사용자 ID: 01 Type: Concrete, Domain
+- Description: 시스템을 통해 파일을 업로드, 검색, 공유하는 일반 직원을 나타낸다.
+- Associated Use Case: U_01, U_02, U_03, U_04
+- Responsibilities
+    - 파일 업로드 요청() : void
+    - 파일 공유 요청() : void
+    - 버전 복원 요청() : void
+- Collaborators
+    - 파일
+    - 공유 권한
+    - 버전 이력
+- Attributes
+    - 이메일 : String
+    - 이름 : String
+    - 할당용량 : Double
+    - 사용용량 : Double
+- Relationships
+    - Aggregation (has-parts): 폴더, 파일
+    - Other Associations: 인증 및 보안, 시스템 DB
+
+#### 2. 관리자
+- Class Name: 관리자 ID: 02 Type: Concrete, Domain
+- Description: 미니 드라이브 시스템의 사용자 계정과 저장 공간(Quota)을 관리하는 사용자를 나타낸다.
+- Associated Use Case: U_01
+- Responsibilities
+    - 사용자 계정 생성() : void
+    - 할당 용량 설정() : void
+- Collaborators
+    - 사용자
+    - 시스템 DB
+- Attributes
+    - 관리자 사번 : Integer
+- Relationships
+    - Generalization (a-kind-of): 사용자
+    - Other Associations: 시스템 DB
+
+#### 3. 인증 및 보안
+- Class Name: 인증 및 보안 ID: 03 Type: Concrete, Controller
+- Description: 시스템의 로그인 인증 및 전송 구간 암호화(TLS 1.3) 처리를 담당한다.
+- Associated Use Case: U_01, U_02, U_03
+- Responsibilities
+    - 로그인 검증() : void
+    - 로그아웃 처리() : void
+    - 접근 권한 확인() : bool
+- Collaborators
+    - 사용자
+    - 시스템 DB
+- Attributes
+    - 세션 ID : String
+    - 토큰 : String
+    - TLS 적용 여부 : Boolean
+- Relationships
+    - Other Associations: 사용자, 시스템 DB
+
+### 4. 파일
+- Class Name: 파일 ID: 04 Type: Concrete, Domain
+- Description: 시스템에 업로드되어 보관 및 관리되는 개별 파일 객체를 나타낸다.
+- Associated Use Case: U_02, U_03, U_04
+- Responsibilities
+    - 파일 저장() : void
+    - 파일 다운로드() : void
+    - 메타데이터 갱신() : void
+- Collaborators
+    - 사용자
+    - 검색 캐시
+    - 시스템 DB
+- Attributes
+    - 파일 ID : Integer
+    - 파일명 : String
+    - 확장자 : String
+    - 파일 크기 : Double
+    - 등록일시 : Date
+- Relationships
+    - Aggregation (has-parts): 버전 이력, 공유 권한
+    - Other Associations: 폴더, 검색 캐시, 시스템 DB
+
+#### 5. 폴더
+- Class Name: 폴더 ID: 05 Type: Concrete, Domain
+- Description: 파일을 계층적으로 묶어서 분류하고 관리하는 폴더 객체를 나타낸다.
+- Associated Use Case: U_02
+- Responsibilities
+    - 폴더 생성() : void
+    - 폴더 이동() : void
+    - 폴더명 변경() : void
+- Collaborators
+    - 파일
+    - 시스템 DB
+- Attributes
+    - 폴더 ID : Integer
+    - 폴더명 : String
+    - 상위 폴더 ID : Integer
+- Relationships
+    - Aggregation (has-parts): 파일
+    - Other Associations: 사용자, 시스템 DB
+
+#### 6. 버전 이력
+- Class Name: 버전 이력 ID: 06 Type: Concrete, Domain
+- Description: 동일 파일 수정 시 낙관적 락을 기반으로 변경된 과거 이력을 보관하고 관리한다.
+- Associated Use Case: U_04
+- Responsibilities
+    - 이전 버전 조회() : void
+    - 동시 수정 충돌 검증() : bool
+    - 특정 버전 복원() : void
+- Collaborators
+    - 파일
+    - 시스템 DB
+- Attributes
+    - 버전 ID : Integer
+    - 파일 ID : Integer
+    - 버전 번호 : Integer
+    - 변경 일시 : Date
+    - 수정자 ID : String
+- Relationships
+    - Other Associations: 파일, 시스템 DB
+
+#### 7. 공유 권한
+- Class Name: 공유 권한 ID: 07 Type: Concrete, Domain
+- Description: 특정 파일이나 폴더에 대해 조직 내 사용자에게 부여된 세분화된 접근 권한을 정의한다.
+- Associated Use Case: U_03
+- Responsibilities
+    - 읽기/수정 권한 부여() : void
+    - 접근 권한 조회() : void
+- Collaborators
+    - 파일
+    - 사용자
+    - 시스템 DB
+- Attributes
+    - 공유 ID : Integer
+    - 대상자 이메일 : String
+    - 권한 유형 : String
+- Relationships
+    - Other Associations: 파일, 사용자, 시스템 DB
+
+#### 8. 외부 링크
+- Class Name: 외부 링크 ID: 08 Type: Concrete, Domain
+- Description: 외부 협력업체와의 파일 공유를 위해 생성되는 만료 기한이 설정된 다운로드 전용 링크를 나타낸다.
+- Associated Use Case: U_03
+- Responsibilities
+    - 외부 링크 생성() : String
+    - 링크 유효기간 검증() : bool
+    - 만료 처리() : void
+- Collaborators
+    - 파일
+    - 시스템 DB
+- Attributes
+    - 링크 ID : Integer
+    - 암호화된 URL : String
+    - 만료 일자 : Date
+- Relationships
+    - Other Associations: 파일, 시스템 DB
+
+#### 9. 검색 캐시
+- Class Name: 검색 캐시 ID: 09 Type: Concrete, Infrastructure
+- Description: 빠른 다중 필터 검색을 위해 파일 및 폴더의 메타데이터를 인메모리(Redis)에 보관한다.
+- Associated Use Case: U_02
+- Responsibilities
+    - 다중 필터 검색() : void
+    - 캐시 데이터 저장() : void
+    - 메타데이터 캐시 갱신() : void
+- Collaborators
+    - 파일
+    - 시스템 DB
+- Attributes
+    - 캐시 Key : String
+    - 메타데이터 : String
+- Relationships
+    - Other Associations: 파일, 시스템 DB
+
+#### 10. 시스템 DB
+- Class Name: 시스템 DB ID: 10 Type: Concrete, Infrastructure
+- Description: 미니 드라이브의 사용자, 파일, 권한, 버전 등의 데이터를 영구적으로 저장하는 데이터베이스를 나타낸다.
+- Associated Use Case: U_01, U_02, U_03, U_04
+- Responsibilities
+    - 데이터 저장() : void
+    - 데이터 수정() : void
+    - 데이터 삭제() : void
+- Collaborators
+    - 모든 Domain 클래스
+- Attributes
+    - DB URL : String
+    - 연결 상태 : Boolean
+    - 커넥션 풀 사이즈 : Integer
+- Relationships
+    - Other Associations: 사용자, 파일, 폴더, 버전 이력, 공유 권한, 외부 링크
 
 ---
 
