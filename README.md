@@ -13,6 +13,7 @@ se
 │   ├── project2.md
 │   ├── project4.md
 │   ├── project4_assign3.md
+│   ├── project7.md
 │   └── [김태림]프로젝트관리계획서_260425_Doc-001.pdf
 ├── image/
 │   ├── 요구사항 정적 분석 다이어그램.png
@@ -24,4 +25,5 @@ se
 
 - 과제1 결과물은 doc/project1.md 과 doc/project2.md 에 있습니다
 - 과제2 결과물은 doc/project4.md 와 doc/[김태림]프로젝트관리계획서_260425_Doc-001.pdf 에 있습니다.
-- 과제3 결과물은 doc/project4_assign3.md에 있습니다.
+- 과제3 결과물은 doc/project4_assign3.md 에 있습니다.
+- 과제4 결과물은 doc/project7.md 에 있습니다.
