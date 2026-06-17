@@ -13,10 +13,12 @@ se
 │   ├── project2.md
 │   ├── project4.md
 │   ├── project4_assign3.md
+│   ├── project5.md
 │   ├── project7.md
 │   └── [김태림]프로젝트관리계획서_260425_Doc-001.pdf
 ├── image/
 │   ├── UseCase Diagram.png
+│   ├── 테스트 환경 구성도.png
 │   ├── 요구사항 정적 분석 다이어그램.png
 │   ├── 요구사항_순차다이어그램_로그인.png
 │   ├── 요구사항_순차다이어그램_파일공유.png
@@ -31,3 +33,4 @@ se
 - 과제2 결과물은 doc/project4.md 와 doc/[김태림]프로젝트관리계획서_260425_Doc-001.pdf 에 있습니다.
 - 과제3 결과물은 doc/project4_assign3.md 에 있습니다.
 - 과제4 결과물은 doc/project7.md 에 있습니다.
+- 과제5 결과물은 doc/project5.md 에 있습니다.
